@@ -1,7 +1,7 @@
 import Foundation
 
 // Domain model for Country
-public struct Country: Identifiable, Equatable, Codable {
+public struct Country: Identifiable, Equatable, Codable, Sendable, Hashable {
     public let id: String // We'll use the common name as identifier
     public let name: CountryName
     public let capital: String?
@@ -51,6 +51,10 @@ public struct Country: Identifiable, Equatable, Codable {
         formatter.numberStyle = .decimal
         formatter.maximumFractionDigits = 2
         return formatter.string(from: NSNumber(value: area)).map { "\($0) km²" }
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 

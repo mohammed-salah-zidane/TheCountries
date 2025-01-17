@@ -9,14 +9,14 @@ import Foundation
 import os.log
 
 // MARK: - NetworkLogger Protocol
-public protocol NetworkLoggerProtocol {
+public protocol NetworkLoggerProtocol: Sendable {
     func logRequest(_ request: URLRequest)
     func logResponse(_ response: URLResponse?, data: Data?, error: Error?)
     func logError(_ error: Error)
 }
 
 // MARK: - NetworkLogger Implementation
-public class NetworkLogger: NetworkLoggerProtocol {
+public final class NetworkLogger: NetworkLoggerProtocol {
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"

@@ -13,19 +13,16 @@ public final class CountryRepository: CountryRepositoryProtocol {
     private let remoteDataSource: any RemoteCountryDataSource
     private let localDataSource: any LocalCountryDataSource
     private let cachePolicy: CachePolicyProtocol
-    private let defaults: UserDefaults
     private let lastUpdateKey = "countries_last_update_time"
     
     public init(
         remoteDataSource: any RemoteCountryDataSource = RemoteCountryDataSourceImpl(),
         localDataSource: any LocalCountryDataSource = LocalCountryDataSourceImpl(),
-        cachePolicy: CachePolicyProtocol = DefaultCachePolicy(),
-        defaults: UserDefaults = .standard
+        cachePolicy: CachePolicyProtocol = DefaultCachePolicy()
     ) {
         self.remoteDataSource = remoteDataSource
         self.localDataSource = localDataSource
         self.cachePolicy = cachePolicy
-        self.defaults = defaults
     }
     
     public func fetchAllCountries(policy: DataSourcePolicy = .default) async throws -> [Country] {
@@ -43,9 +40,9 @@ public final class CountryRepository: CountryRepositoryProtocol {
     
     public func updateLocalStorage(with countries: [Country]) async throws {
         do {
-            let dtos = try countries.map { try mapToDTO(from: $0) }
+            let dtos = countries.map { mapToDTO(from: $0) }
             try await localDataSource.save(dtos)
-            defaults.set(Date(), forKey: lastUpdateKey)
+            UserDefaults.standard.set(Date(), forKey: lastUpdateKey)
         } catch {
             throw CoreError.storageError(error.localizedDescription)
         }
@@ -54,14 +51,14 @@ public final class CountryRepository: CountryRepositoryProtocol {
     public func clearLocalStorage() async throws {
         do {
             try await localDataSource.clear()
-            defaults.removeObject(forKey: lastUpdateKey)
+            UserDefaults.standard.removeObject(forKey: lastUpdateKey)
         } catch {
             throw CoreError.storageError(error.localizedDescription)
         }
     }
     
     public func hasValidLocalData() async -> Bool {
-        guard let lastUpdate = defaults.object(forKey: lastUpdateKey) as? Date,
+        guard let lastUpdate = UserDefaults.standard.object(forKey: lastUpdateKey) as? Date,
               cachePolicy.isValid(lastUpdateTime: lastUpdate),
               await localDataSource.exists() else {
             return false
@@ -69,23 +66,34 @@ public final class CountryRepository: CountryRepositoryProtocol {
         return true
     }
     
+    public func searchCountries(withQuery query: String) async throws -> [Core.Country] {
+        do {
+            // Try remote search first
+            let dtos = try await remoteDataSource.searchCountry(query: query)
+            return dtos.map({ mapToDomain(from: $0) })
+        } catch {
+            // If remote fails, get cached countries and filter locally
+            let cachedCountries = try await fetchLocalCountries()
+            return cachedCountries.filter { $0.matches(query: query) }
+        }
+    }
     // MARK: - Private Methods
     
     private func fetchRemoteCountries() async throws -> [Country] {
         do {
             let dtos = try await remoteDataSource.fetch()
             try await localDataSource.save(dtos)
-            defaults.set(Date(), forKey: lastUpdateKey)
-            return try dtos.map { try mapToDomain(from: $0) }
+            UserDefaults.standard.set(Date(), forKey: lastUpdateKey)
+            return dtos.map { mapToDomain(from: $0) }
         } catch {
             throw transformError(error)
         }
     }
     
-    private func fetchLocalCountries() async throws -> [Country] {
+    public func fetchLocalCountries() async throws -> [Country] {
         do {
             let dtos = try await localDataSource.fetch()
-            return try dtos.map { try mapToDomain(from: $0) }
+            return dtos.map { mapToDomain(from: $0) }
         } catch {
             throw transformError(error)
         }
@@ -119,11 +127,11 @@ public final class CountryRepository: CountryRepositoryProtocol {
     
     // MARK: - Mapping Methods
     
-    private func mapToDomain(from dto: CountryDTO) throws -> Country {
-        try CountryMapper.mapToDomain(dto: dto)
+    private func mapToDomain(from dto: CountryDTO) -> Country {
+        CountryMapper.mapToDomain(dto: dto)
     }
     
-    private func mapToDTO(from country: Country) throws -> CountryDTO {
-        try CountryMapper.mapToDTO(country: country)
+    private func mapToDTO(from country: Country) -> CountryDTO {
+        CountryMapper.mapToDTO(country: country)
     }
 }

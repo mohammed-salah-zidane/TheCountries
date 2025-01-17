@@ -9,7 +9,7 @@ public enum CountryMapper {
     /// - Parameter dto: The CountryDTO to map
     /// - Returns: A Country domain model
     /// - Throws: CoreError.invalidData if mapping fails
-    public static func mapToDomain(dto: CountryDTO) throws -> Country {
+    public static func mapToDomain(dto: CountryDTO) -> Country {
         // Extract the first currency if available
         let firstCurrency = dto.currencies?.first.map { (_, value) in
             Currency(name: value.name, symbol: value.symbol)
@@ -41,7 +41,7 @@ public enum CountryMapper {
     /// - Parameter country: The Country domain model to map
     /// - Returns: A CountryDTO
     /// - Throws: CoreError.invalidData if mapping fails
-    public static func mapToDTO(country: Country) throws -> CountryDTO {
+    public static func mapToDTO(country: Country) -> CountryDTO {
         // Create the Name DTO with nativeName
         let name = CountryDTO.Name(
             common: country.name.common,

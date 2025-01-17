@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Request Configuration Protocol
-public protocol RequestConfigurable {
+public protocol RequestConfigurable: Sendable {
     var baseURL: String { get }
     var path: String { get }
     var method: HTTPMethod { get }

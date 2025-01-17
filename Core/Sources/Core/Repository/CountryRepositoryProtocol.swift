@@ -8,12 +8,18 @@
 import Foundation
 
 // MARK: - Repository Protocol
-public protocol CountryRepositoryProtocol {
+public protocol CountryRepositoryProtocol: Sendable {
     /// Fetches all countries based on the specified data source policy
     /// - Parameter policy: Determines the data source strategy
     /// - Returns: Array of Country domain models
     /// - Throws: CoreError if the operation fails
     func fetchAllCountries(policy: DataSourcePolicy) async throws -> [Country]
+    
+    /// Searches countries with the given query
+    /// - Parameter query: Search term
+    /// - Returns: List of matching countries
+    /// - Throws: CoreError if the operation fails
+    func searchCountries(withQuery query: String) async throws -> [Country]
     
     /// Updates local storage with the provided countries
     /// - Parameter countries: Array of Country domain models to store

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Supporting Domain Models
 
-public struct CountryName: Equatable, Codable {
+public struct CountryName: Equatable, Codable, Sendable {
     public let common: String
     public let official: String
     
@@ -12,7 +12,7 @@ public struct CountryName: Equatable, Codable {
     }
 }
 
-public struct Currency: Equatable, Codable {
+public struct Currency: Equatable, Codable, Sendable {
     public let name: String
     public let symbol: String
     
@@ -27,7 +27,7 @@ public struct Currency: Equatable, Codable {
     }
 }
 
-public struct Coordinates: Equatable, Codable {
+public struct Coordinates: Equatable, Codable, Sendable {
     public let latitude: Double
     public let longitude: Double
     

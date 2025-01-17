@@ -28,4 +28,8 @@ public final class RemoteCountryDataSourceImpl: RemoteCountryDataSource {
         // We can safely return CountryDTO array since it's now Sendable
         return try await networkClient.request(APIEndpoints.allCountries)
     }
+    
+    public func searchCountry(query: String) async throws -> [CountryDTO] {
+        return try await networkClient.request(APIEndpoints.countryByName(query))
+    }
 }

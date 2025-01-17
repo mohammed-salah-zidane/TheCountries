@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AB99BA222D3ABBF500D80CFE /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA212D3ABBF500D80CFE /* Presentation */; };
+		AB99BA232D3ABBF500D80CFE /* Presentation in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA212D3ABBF500D80CFE /* Presentation */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		AB99BA262D3ABBFD00D80CFE /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA252D3ABBFD00D80CFE /* Core */; };
+		AB99BA282D3ABBFD00D80CFE /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA272D3ABBFD00D80CFE /* Data */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AB13B6F22D36BF2B00D6D914 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -22,6 +29,20 @@
 			remoteInfo = TheCountries;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AB99BA242D3ABBF500D80CFE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AB99BA232D3ABBF500D80CFE /* Presentation in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		AB13B6E12D36BF2900D6D914 /* TheCountries.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheCountries.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -55,6 +76,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB99BA222D3ABBF500D80CFE /* Presentation in Frameworks */,
+				AB99BA262D3ABBFD00D80CFE /* Core in Frameworks */,
+				AB99BA282D3ABBFD00D80CFE /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +108,7 @@
 				AB13B6E32D36BF2900D6D914 /* TheCountries */,
 				AB13B6F42D36BF2B00D6D914 /* TheCountriesTests */,
 				AB13B6FE2D36BF2B00D6D914 /* TheCountriesUITests */,
+				AB99BA202D3ABBF500D80CFE /* Frameworks */,
 				AB13B6E22D36BF2900D6D914 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,6 +123,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AB99BA202D3ABBF500D80CFE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -108,6 +140,7 @@
 				AB13B6DD2D36BF2900D6D914 /* Sources */,
 				AB13B6DE2D36BF2900D6D914 /* Frameworks */,
 				AB13B6DF2D36BF2900D6D914 /* Resources */,
+				AB99BA242D3ABBF500D80CFE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -118,6 +151,9 @@
 			);
 			name = TheCountries;
 			packageProductDependencies = (
+				AB99BA212D3ABBF500D80CFE /* Presentation */,
+				AB99BA252D3ABBFD00D80CFE /* Core */,
+				AB99BA272D3ABBFD00D80CFE /* Data */,
 			);
 			productName = TheCountries;
 			productReference = AB13B6E12D36BF2900D6D914 /* TheCountries.app */;
@@ -410,7 +446,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -440,7 +476,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -568,6 +604,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB99BA212D3ABBF500D80CFE /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
+		AB99BA252D3ABBFD00D80CFE /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		AB99BA272D3ABBFD00D80CFE /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AB13B6D92D36BF2900D6D914 /* Project object */;
 }

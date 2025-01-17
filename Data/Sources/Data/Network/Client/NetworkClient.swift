@@ -8,12 +8,12 @@
 import Foundation
 
 // MARK: - Network Client Protocol
-public protocol NetworkClientProtocol {
+public protocol NetworkClientProtocol: Sendable {
     func request<T: Decodable>(_ config: RequestConfigurable) async throws -> T
 }
 
 // MARK: - Network Client Implementation
-public class NetworkClient: NetworkClientProtocol {
+public final class NetworkClient: NetworkClientProtocol {
     private let session: URLSession
     private let logger: NetworkLoggerProtocol
     

@@ -9,14 +9,20 @@ import Foundation
 import Core
 
 // Make protocols public
-public protocol CountryDataSource {
+public protocol CountryDataSource: Sendable {
     /// Fetches countries from the data source
     /// - Returns: Array of CountryDTO
     /// - Throws: Error if the fetch operation fails
     func fetch() async throws -> [CountryDTO]
 }
 
-public protocol RemoteCountryDataSource: CountryDataSource {}
+public protocol RemoteCountryDataSource: CountryDataSource {
+    
+    /// search country from the data source
+    /// - Returns: Array of CountryDTO
+    /// - Throws: Error if the fetch operation fails
+    func searchCountry(query: String) async throws -> [CountryDTO]
+}
 
 public protocol LocalCountryDataSource: CountryDataSource {
     /// Saves countries to local storage

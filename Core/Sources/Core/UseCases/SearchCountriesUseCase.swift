@@ -8,13 +8,18 @@
 import Foundation
 
 // MARK: - Search Countries Use Case Protocol
-public protocol SearchCountriesUseCaseProtocol {
-    /// Searches countries based on a query string
+public protocol SearchCountriesUseCaseProtocol: Sendable {
+    /// Searches countries based on a query string, first trying remote then falling back to cache
+    /// - Parameter query: The search query
+    /// - Returns: Array of matching countries
+    func execute(query: String) async throws -> [Country]
+    
+    /// Searches in local cache only
     /// - Parameters:
     ///   - query: The search query
     ///   - countries: The list of countries to search in
     /// - Returns: Filtered list of countries
-    func execute(query: String, in countries: [Country]) -> [Country]
+    func searchInCache(query: String, in countries: [Country]) -> [Country]
     
     /// Sorts countries based on specified criteria
     /// - Parameters:
@@ -26,9 +31,17 @@ public protocol SearchCountriesUseCaseProtocol {
 
 // MARK: - Search Countries Use Case Implementation
 public final class SearchCountriesUseCase: SearchCountriesUseCaseProtocol {
-    public init() {}
+    private let repository: CountryRepositoryProtocol
     
-    public func execute(query: String, in countries: [Country]) -> [Country] {
+    public init(repository: CountryRepositoryProtocol) {
+        self.repository = repository
+    }
+    
+    public func execute(query: String) async throws -> [Country] {
+        return try await repository.searchCountries(withQuery: query)
+    }
+    
+    public func searchInCache(query: String, in countries: [Country]) -> [Country] {
         guard !query.isEmpty else { return countries }
         return countries.filter { $0.matches(query: query) }
     }
@@ -37,4 +50,3 @@ public final class SearchCountriesUseCase: SearchCountriesUseCaseProtocol {
         return countries.sorted(by: Country.comparator(for: criteria))
     }
 }
-

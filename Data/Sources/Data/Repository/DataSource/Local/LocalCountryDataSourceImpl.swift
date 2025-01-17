@@ -26,6 +26,7 @@ extension LocalCountryDataSource {
 // MARK: - Local Country Data Source Implementation
 public final class LocalCountryDataSourceImpl: LocalCountryDataSource, ResourceManageable {
     // MARK: - Properties
+    
     private let storage: PersistentStorage
     private let storageKey = "stored_countries"
     private let lastUpdateKey = "countries_last_update"
