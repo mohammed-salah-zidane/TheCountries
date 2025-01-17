@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Network Errors
-public enum NetworkError: LocalizedError {
+public enum NetworkError: LocalizedError, Equatable {
     case invalidURL
     case requestFailed(statusCode: Int, data: Data?)
     case invalidResponse
@@ -18,6 +18,27 @@ public enum NetworkError: LocalizedError {
     case noInternetConnection
     case unknown(Error)
     case notFound
+    
+    public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
+        switch (lhs, rhs) {
+        case (.invalidURL, .invalidURL),
+             (.invalidResponse, .invalidResponse),
+             (.cancelled, .cancelled),
+             (.timeout, .timeout),
+             (.noInternetConnection, .noInternetConnection),
+             (.notFound, .notFound):
+            return true
+        case let (.requestFailed(lhsCode, lhsData), .requestFailed(rhsCode, rhsData)):
+            return lhsCode == rhsCode && lhsData == rhsData
+        case (.decodingFailed, .decodingFailed),
+             (.unknown, .unknown):
+            // Since Error doesn't conform to Equatable, we'll consider them equal
+            // if they're the same case
+            return true
+        default:
+            return false
+        }
+    }
     
     public var errorDescription: String? {
         switch self {
