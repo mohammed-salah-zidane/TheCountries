@@ -1,4 +1,3 @@
-// Your imports
 import Foundation
 import Core
 import Data
@@ -39,4 +38,12 @@ public final class CoreAssembly: CoreAssemblyProvider {
             repository: repository
         )
     }
+    
+    // Add this method
+    public func makeSelectedCountriesUseCase() -> Core.SelectedCountriesUseCase {
+        SelectedCountriesUseCase(
+            repository: repository
+        )
+    }
+    
 }

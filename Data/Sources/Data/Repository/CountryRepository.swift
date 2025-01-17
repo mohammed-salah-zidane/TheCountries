@@ -77,6 +77,35 @@ public final class CountryRepository: CountryRepositoryProtocol {
             return cachedCountries.filter { $0.matches(query: query) }
         }
     }
+    
+    // MARK: - Selected Countries Methods
+    
+    public func fetchSelectedCountries() async throws -> [Country] {
+        do {
+            let dtos = try await localDataSource.fetchSelectedCountries()
+            return dtos.map { mapToDomain(from: $0) }
+        } catch {
+            throw CoreError.storageError("Failed to fetch selected countries: \(error.localizedDescription)")
+        }
+    }
+    
+    public func saveSelectedCountries(_ countries: [Country]) async throws {
+        do {
+            let dtos = countries.map { mapToDTO(from: $0) }
+            try await localDataSource.saveSelectedCountries(dtos)
+        } catch {
+            throw CoreError.storageError("Failed to save selected countries: \(error.localizedDescription)")
+        }
+    }
+    
+    public func clearSelectedCountries() async throws {
+        do {
+            try await localDataSource.clearSelectedCountries()
+        } catch {
+            throw CoreError.storageError("Failed to clear selected countries: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func fetchRemoteCountries() async throws -> [Country] {

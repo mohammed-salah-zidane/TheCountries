@@ -37,6 +37,7 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     // MARK: - Private Properties
     let fetchCountriesUseCase: FetchCountriesUseCase
     let searchCountriesUseCase: SearchCountriesUseCase
+    let selectedCountriesUseCase: SelectedCountriesUseCase
     private let locationService: LocationService
     private var locationTask: Task<Void, Never>?
     
@@ -44,15 +45,17 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     public init(
         fetchCountriesUseCase: FetchCountriesUseCase,
         searchCountriesUseCase: SearchCountriesUseCase,
+        selectedCountriesUseCase: SelectedCountriesUseCase,
         locationService: LocationService
     ) {
         self.fetchCountriesUseCase = fetchCountriesUseCase
         self.searchCountriesUseCase = searchCountriesUseCase
+        self.selectedCountriesUseCase = selectedCountriesUseCase
         self.locationService = locationService
         super.init()
         
         locationTask = Task { @MainActor [weak self] in
-            await self?.loadInitialCountry()
+            await self?.loadInitialData()
         }
     }
     
@@ -61,6 +64,19 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     }
     
     // MARK: - Private Methods
+    private func loadInitialData() async {
+        do {
+            let savedCountries = try await selectedCountriesUseCase.fetchSelectedCountries()
+            countries = savedCountries
+            
+            if countries.isEmpty {
+                await loadDefaultCountry()
+            }
+        } catch {
+            await loadDefaultCountry()
+        }
+    }
+    
     private func loadInitialCountry() async {
         await loadCurrentLocation()
         
@@ -78,6 +94,7 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
 //            let countryId = countryResult.id
 //            if !countries.contains(where: { $0.id == countryId }) {
 //                countries.append(countryResult)
+//                try? await selectedCountriesUseCase.saveSelectedCountries(countries)
 //            }
         } catch {
             self.error = error
@@ -103,6 +120,8 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
                 let countryId = country.id
                 if !countries.contains(where: { $0.id == countryId }) {
                     countries.append(country)
+                    // Save default country to cache when added
+                    try? await selectedCountriesUseCase.saveSelectedCountries(countries)
                 }
             }
         } catch {
@@ -118,10 +137,21 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
         guard countries.count < maxCountries else { return }
         guard !countries.contains(where: { $0.id == country.id }) else { return }
         countries.append(country)
+        Task {
+            try? await selectedCountriesUseCase.saveSelectedCountries(countries)
+        }
     }
     
     public func removeCountry(_ country: Country) {
         countries.removeAll(where: { $0.id == country.id })
+        // Save the updated list after removal
+        Task {
+            if countries.isEmpty {
+                try? await selectedCountriesUseCase.clearSelectedCountries()
+            } else {
+                try? await selectedCountriesUseCase.saveSelectedCountries(countries)
+            }
+        }
     }
     
     public func refreshLocation() async {

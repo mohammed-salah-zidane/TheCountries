@@ -6,6 +6,7 @@ import Core
 public protocol CoreAssemblyProvider {
     func makeFetchCountriesUseCase() -> FetchCountriesUseCase
     func makeSearchCountriesUseCase() -> SearchCountriesUseCase
+    func makeSelectedCountriesUseCase() -> SelectedCountriesUseCase
 }
 
 @MainActor
@@ -32,6 +33,7 @@ public final class PresentationAssembly {
                 .makeFetchCountriesUseCase(),
             searchCountriesUseCase: coreAssembly
                 .makeSearchCountriesUseCase(),
+            selectedCountriesUseCase: coreAssembly.makeSelectedCountriesUseCase(),
             locationService: makeLocationService()
         )
     }

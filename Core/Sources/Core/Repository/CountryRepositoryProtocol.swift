@@ -33,6 +33,20 @@ public protocol CountryRepositoryProtocol: Sendable {
     /// Checks if local storage has valid data
     /// - Returns: Boolean indicating if valid data exists
     func hasValidLocalData() async -> Bool
+    
+    /// Fetches selected countries from local storage
+    /// - Returns: Array of selected Country domain models
+    /// - Throws: CoreError if the operation fails
+    func fetchSelectedCountries() async throws -> [Country]
+    
+    /// Saves selected countries to local storage
+    /// - Parameter countries: Array of Country domain models to store as selected
+    /// - Throws: CoreError.storageError if the operation fails
+    func saveSelectedCountries(_ countries: [Country]) async throws
+    
+    /// Clears all selected countries from local storage
+    /// - Throws: CoreError.storageError if the operation fails
+    func clearSelectedCountries() async throws
 }
 
 // MARK: - Default Implementation
