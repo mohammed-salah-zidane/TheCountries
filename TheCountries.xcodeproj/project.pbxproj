@@ -51,6 +51,7 @@
 		AB624E3F2D3967C00001BD50 /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 		AB624E402D3967FA0001BD50 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
 		AB624E412D3968260001BD50 /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
+		ABFF4FA32D3ADEF200FF589D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -110,6 +111,7 @@
 				AB13B6FE2D36BF2B00D6D914 /* TheCountriesUITests */,
 				AB99BA202D3ABBF500D80CFE /* Frameworks */,
 				AB13B6E22D36BF2900D6D914 /* Products */,
+				ABFF4FA32D3ADEF200FF589D /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
