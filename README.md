@@ -141,7 +141,7 @@ xcodebuild test -scheme TheCountries -destination 'platform=iOS Simulator,name=i
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## ✍️ Authors <a name = "authors"></a>
-- [@YourUsername](https://github.com/YourUsername) - Initial work
+- [@mohammed-salah-zidane](https://github.com/mohammed-salah-zidane) - Initial work
 
 ## 🎉 Acknowledgments <a name = "acknowledgments"></a>
 - Hat tip to anyone whose code was used

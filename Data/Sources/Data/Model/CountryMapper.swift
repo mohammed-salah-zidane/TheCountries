@@ -62,9 +62,11 @@ public enum CountryMapper {
         // Create the capital array
         let capital: [String]? = country.capital.map { [$0] }
         
-        // Create a dictionary of languages
+        // Create a dictionary of languages with unique keys
         let languages: [String: String]? = country.languages.isEmpty ? nil :
-            Dictionary(uniqueKeysWithValues: country.languages.map { ("eng", $0) })
+            Dictionary(uniqueKeysWithValues: country.languages.enumerated().map { index, language in
+                ("lang_\(index)", language)
+            })
         
         // Create the coordinates array
         let latlng = country.coordinates.map { [$0.latitude, $0.longitude] }

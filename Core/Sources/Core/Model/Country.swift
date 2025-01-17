@@ -2,7 +2,7 @@ import Foundation
 
 // Domain model for Country
 public struct Country: Identifiable, Equatable, Codable, Sendable, Hashable {
-    public let id: String // We'll use the common name as identifier
+    public let id: String
     public let name: CountryName
     public let capital: String?
     public let currency: Currency?

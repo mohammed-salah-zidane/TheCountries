@@ -133,7 +133,7 @@ public final class LocalCountryDataSourceImpl: LocalCountryDataSource, ResourceM
     }
     
     public nonisolated func prepareForBackground() {
-        let (cache, storage, storageKey, lastUpdateKey, selectedCountriesKey) = (self.cache, self.storage, self.storageKey, self.lastUpdateKey, self.selectedCountriesKey)
+        let (cache, storage, storageKey, selectedCountriesKey) = (self.cache, self.storage, self.storageKey, self.selectedCountriesKey)
         Task {
             if let cached = await cache.getData() {
                 try? await storage.save(cached, forKey: storageKey)

@@ -11,14 +11,23 @@ public protocol HomeViewModelProtocol: ObservableObject {
     func refreshLocation() async
 }
 
-// Define ViewModelError
+// Enhanced ViewModelError with more specific cases
 fileprivate enum ViewModelError: LocalizedError {
     case noDataAvailable
+    case maxCountriesReached
+    case locationServiceFailed
+    case defaultCountryNotFound
     
     var errorDescription: String? {
         switch self {
         case .noDataAvailable:
             return "No data available"
+        case .maxCountriesReached:
+            return "Maximum number of countries (5) reached"
+        case .locationServiceFailed:
+            return "Unable to determine your location"
+        case .defaultCountryNotFound:
+            return "Default country could not be loaded"
         }
     }
 }
@@ -40,6 +49,7 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     let selectedCountriesUseCase: SelectedCountriesUseCase
     private let locationService: LocationService
     private var locationTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
     
     // MARK: - Initialization
     public init(
@@ -54,79 +64,105 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
         self.locationService = locationService
         super.init()
         
-        locationTask = Task { @MainActor [weak self] in
-            await self?.loadInitialData()
-        }
+        // Initialize with saved data and location
+        startInitialization()
     }
     
     deinit {
         locationTask?.cancel()
+        refreshTask?.cancel()
     }
     
     // MARK: - Private Methods
-    private func loadInitialData() async {
-        do {
-            let savedCountries = try await selectedCountriesUseCase.fetchSelectedCountries()
-            countries = savedCountries
-            
-            if countries.isEmpty {
-                await loadDefaultCountry()
-            }
-        } catch {
-            await loadDefaultCountry()
-        }
-    }
-    
-    private func loadInitialCountry() async {
-        await loadCurrentLocation()
+    private func startInitialization() {
+        // Cancel any existing task
+        locationTask?.cancel()
         
-        if countries.isEmpty {
-            await loadDefaultCountry()
+        // Start new initialization task
+        locationTask = Task { @MainActor [weak self] in
+            await self?.initializeData()
         }
     }
     
-    private func loadCurrentLocation() async {
+    private func initializeData() async {
+        // Check if task is cancelled
+        guard !Task.isCancelled else {
+            isLoading = false
+            return
+        }
+        
         isLoading = true
         error = nil
         
+        // Step 1: Try to load saved countries
         do {
-//            let countryResult = try await locationService.getCurrentCountry()
-//            let countryId = countryResult.id
-//            if !countries.contains(where: { $0.id == countryId }) {
-//                countries.append(countryResult)
-//                try? await selectedCountriesUseCase.saveSelectedCountries(countries)
-//            }
+            let savedCountries = try await selectedCountriesUseCase.fetchSelectedCountries()
+            if !savedCountries.isEmpty {
+                countries = savedCountries
+                isLoading = false
+                return
+            }
         } catch {
-            self.error = error
-            handleError(error)
+            // Continue to location-based loading if saved data fails
         }
         
-        isLoading = false
+        // Check if task is cancelled
+        guard !Task.isCancelled else {
+            isLoading = false
+            return
+        }
+        
+        // Step 2: Try to get country by location
+        do {
+            let locationCountry = try await locationService.getCurrentCountry()
+            if !Task.isCancelled {
+                countries = [locationCountry]
+                try? await selectedCountriesUseCase.saveSelectedCountries(countries)
+                isLoading = false
+                return
+            }
+        } catch {
+            // Continue to default country if location fails
+        }
+        
+        // Check if task is cancelled
+        guard !Task.isCancelled else {
+            isLoading = false
+            return
+        }
+        
+        // Step 3: Load default country as fallback
+        await loadDefaultCountry()
     }
     
     private func loadDefaultCountry() async {
-        isLoading = true
-        error = nil
+        guard !Task.isCancelled else {
+            isLoading = false
+            return
+        }
         
         do {
             let defaultName = defaultCountryName.lowercased()
             let searchResults = try await searchCountriesUseCase.execute(query: defaultName)
             
-            let filteredCountry = searchResults.first { country in
-                country.name.common.lowercased() == defaultName
+            guard !Task.isCancelled else {
+                isLoading = false
+                return
             }
             
-            if let country = filteredCountry {
-                let countryId = country.id
-                if !countries.contains(where: { $0.id == countryId }) {
-                    countries.append(country)
-                    // Save default country to cache when added
-                    try? await selectedCountriesUseCase.saveSelectedCountries(countries)
-                }
+            if let country = searchResults.first(where: {
+                $0.name.common.lowercased() == defaultName
+            }) {
+                countries = [country]
+                try? await selectedCountriesUseCase.saveSelectedCountries(countries)
+            } else {
+                error = ViewModelError.defaultCountryNotFound
             }
         } catch {
-            self.error = error
-            handleError(error)
+            if !Task.isCancelled {
+                self.error = ViewModelError.defaultCountryNotFound
+                handleError(error)
+            }
         }
         
         isLoading = false
@@ -134,8 +170,12 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     
     // MARK: - Public Methods
     public func addCountry(_ country: Country) {
-        guard countries.count < maxCountries else { return }
+        guard countries.count < maxCountries else {
+            error = ViewModelError.maxCountriesReached
+            return
+        }
         guard !countries.contains(where: { $0.id == country.id }) else { return }
+        
         countries.append(country)
         Task {
             try? await selectedCountriesUseCase.saveSelectedCountries(countries)
@@ -144,10 +184,12 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     
     public func removeCountry(_ country: Country) {
         countries.removeAll(where: { $0.id == country.id })
-        // Save the updated list after removal
+        
         Task {
             if countries.isEmpty {
                 try? await selectedCountriesUseCase.clearSelectedCountries()
+                // Automatically load default country when list becomes empty
+                await loadDefaultCountry()
             } else {
                 try? await selectedCountriesUseCase.saveSelectedCountries(countries)
             }
@@ -155,6 +197,33 @@ public final class HomeViewModel: BaseViewModelImpl, @preconcurrency HomeViewMod
     }
     
     public func refreshLocation() async {
-        await loadCurrentLocation()
+        // Cancel any existing refresh task
+        refreshTask?.cancel()
+        
+        // Start new refresh task
+        refreshTask = Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            
+            self.isLoading = true
+            self.error = nil
+            
+            do {
+                let country = try await self.locationService.getCurrentCountry()
+                if !Task.isCancelled {
+                    if !self.countries.contains(where: { $0.id == country.id }) {
+                        self.addCountry(country)
+                    }
+                }
+            } catch {
+                if !Task.isCancelled {
+                    self.error = ViewModelError.locationServiceFailed
+                    self.handleError(error)
+                }
+            }
+            
+            if !Task.isCancelled {
+                self.isLoading = false
+            }
+        }
     }
 }

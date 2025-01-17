@@ -54,9 +54,22 @@
 		ABFF4FA32D3ADEF200FF589D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ABFF4FA52D3B244500FF589D /* Exceptions for "TheCountries" folder in "TheCountries" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AB13B6E02D36BF2900D6D914 /* TheCountries */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AB13B6E32D36BF2900D6D914 /* TheCountries */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ABFF4FA52D3B244500FF589D /* Exceptions for "TheCountries" folder in "TheCountries" target */,
+			);
 			path = TheCountries;
 			sourceTree = "<group>";
 		};
@@ -443,6 +456,7 @@
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TheCountries/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_NSLocationTemporaryUsageDescriptionDictionary = "TheCountries App needs access to your locations to fetch your current location";
@@ -478,6 +492,7 @@
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TheCountries/Info.plist;
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_NSLocationTemporaryUsageDescriptionDictionary = "TheCountries App needs access to your locations to fetch your current location";
