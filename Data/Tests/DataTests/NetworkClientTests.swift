@@ -56,7 +56,6 @@ class NetworkClientTests: XCTestCase {
     func testNoInternetConnection() async throws {
         // Given
         await MockURLProtocol.setResponseHandler { _ in
-            let error = URLError(.notConnectedToInternet)
             let response = HTTPURLResponse(
                 url: URL(string: "https://test.com")!,
                 statusCode: 0,
