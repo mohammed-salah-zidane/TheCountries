@@ -1,94 +1,157 @@
 import Foundation
 import CoreLocation
 
+/// A service that fetches a `Country` object using the user’s GPS location.
+/// The class is constrained to the main actor because CLLocationManager
+/// must be used on the main thread (UI).
 public final class LocationService: NSObject, CLLocationManagerDelegate {
-    private var locationManager: CLLocationManager
+
+    // MARK: - Private Properties
+
+    private let locationManager: CLLocationManager
     private var geocoder: CLGeocoder?
-    /// We capture a single completion closure for each call to `getCurrentCountry`.
-    private var completion: ((Result<Country, Error>) -> Void)?
     
+    /// Continuation for waiting on authorization.
+    private var authContinuation: CheckedContinuation<Void, Error>?
+    /// Continuation for waiting on a location fix / geocoding.
+    private var locationContinuation: CheckedContinuation<Country, Error>?
+
+    // MARK: - Initialization
+
     public override init() {
         self.locationManager = CLLocationManager()
         super.init()
+        
         self.locationManager.delegate = self
-        // Configure location manager
+        // Optional: control accuracy/distance
         self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         self.locationManager.distanceFilter = 500
     }
     
+    // MARK: - Public API
+
+    /// Main entry point: asynchronously fetch the current `Country`.
+    /// 1) Requests authorization if `.notDetermined`, and waits for user’s choice.
+    /// 2) If authorized, starts updating location and awaits the first location fix.
+    /// 3) Reverse-geocodes to produce a `Country` object, or throws if it fails.
+    ///
+    /// - Throws: `LocationError.permissionDenied` if the user denies or location is restricted,
+    ///           `LocationError.geocodingFailed` if no valid country is found,
+    ///           or any lower-level geocoding error.
+    /// - Returns: A `Country` object representing the user’s current location.
+    @MainActor
+    public func getCurrentCountry() async throws -> Country {
+        // Step 1: Ensure we have (or get) authorization
+        try await requestAuthorizationIfNeeded()
+        
+        // Step 2: Start location updates and await the geocoded Country
+        locationManager.startUpdatingLocation()
+        
+        return try await withCheckedThrowingContinuation { cont in
+            // Store the location continuation so we can resume it in delegate callbacks.
+            self.locationContinuation = cont
+        }
+    }
+    
+    // MARK: - Private Helpers
+    
+    /// Requests `whenInUse` authorization **if** not determined, suspending until the user
+    /// responds to the system prompt. Throws if the user denies or restricted.
+    @MainActor
+    private func requestAuthorizationIfNeeded() async throws {
+        // If we’re already authorized, just return.
+        let status = locationManager.authorizationStatus
+        switch status {
+        case .authorizedAlways, .authorizedWhenInUse:
+            return
+        case .denied, .restricted:
+            // Already known to be denied or restricted
+            throw LocationError.permissionDenied
+        case .notDetermined:
+            // We must request permission and wait for the user’s response
+            return try await withCheckedThrowingContinuation { cont in
+                self.authContinuation = cont
+                locationManager.requestWhenInUseAuthorization()
+            }
+        @unknown default:
+            throw LocationError.permissionDenied
+        }
+    }
+    
+    /// Cancels any ongoing operations (stops location, cancels geocode, clears continuations).
     private func cleanup() {
         locationManager.stopUpdatingLocation()
         geocoder?.cancelGeocode()
         geocoder = nil
-        completion = nil
-    }
-    
-    private func completeOnce(_ result: Result<Country, Error>) {
-        guard let completion = completion else { return }
-        completion(result)
-        self.completion = nil
-    }
-    
-    @MainActor
-    public func getCurrentCountry() async throws -> Country {
-        // Clean up any previous state
-        cleanup()
         
-        // Request permission if not determined
-        if locationManager.authorizationStatus == .notDetermined {
-            locationManager.requestWhenInUseAuthorization()
-        }
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            self.completion = { [weak self] result in
-                // Ensure cleanup after completion
-                self?.cleanup()
-                continuation.resume(with: result)
-            }
-            
-            // Start location updates if authorized
-            if locationManager.authorizationStatus == .authorizedWhenInUse ||
-                locationManager.authorizationStatus == .authorizedAlways {
-                locationManager.startUpdatingLocation()
-            } else {
-                cleanup()
-                continuation.resume(throwing: LocationError.permissionDenied)
-            }
-        }
+        // If either continuation hasn’t resumed yet, we nil it out.
+        // (Never forcibly resume it a second time.)
+        authContinuation = nil
+        locationContinuation = nil
     }
     
     // MARK: - CLLocationManagerDelegate
-    
+
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        // If we’re waiting for an authorization decision:
+        guard let authContinuation = authContinuation else { return }
+        
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            // User granted permission -> resume the continuation
+            authContinuation.resume(returning: ())
+            self.authContinuation = nil
+        case .denied, .restricted:
+            // User denied or restricted -> fail
+            authContinuation.resume(throwing: LocationError.permissionDenied)
+            self.authContinuation = nil
+        case .notDetermined:
+            // Still no user decision; do nothing. We'll remain suspended.
+            break
+        @unknown default:
+            // For future new states, treat as denied.
+            authContinuation.resume(throwing: LocationError.permissionDenied)
+            self.authContinuation = nil
+        }
+    }
+
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let cont = locationContinuation else { return }
         guard let location = locations.first else {
-            completion?(.failure(LocationError.geocodingFailed))
+            cont.resume(throwing: LocationError.geocodingFailed)
+            cleanup()
             return
         }
         
-        // Stop location updates
+        // Stop updates to prevent multiple callbacks.
         locationManager.stopUpdatingLocation()
         
-        // Create new geocoder
+        // Reverse geocode
         let geocoder = CLGeocoder()
         self.geocoder = geocoder
-        
-        // Reverse geocode the location
         geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
             guard let self = self else { return }
+            guard let cont = self.locationContinuation else { return }
+            
+            defer {
+                self.cleanup()
+            }
             
             if let error = error {
-                self.completion?(.failure(error))
+                cont.resume(throwing: error)
                 return
             }
             
-            guard let placemark = placemarks?.first,
-                  let countryCode = placemark.isoCountryCode,
-                  let countryName = placemark.country else {
-                self.completion?(.failure(LocationError.geocodingFailed))
+            guard
+                let placemark = placemarks?.first,
+                let countryCode = placemark.isoCountryCode,
+                let countryName = placemark.country
+            else {
+                cont.resume(throwing: LocationError.geocodingFailed)
                 return
             }
             
-            // Create Country object
+            // Build a Country from placemark
             let country = Country(
                 id: countryCode,
                 name: CountryName(
@@ -108,40 +171,25 @@ public final class LocationService: NSObject, CLLocationManagerDelegate {
                 region: placemark.administrativeArea ?? "Unknown"
             )
             
-            self.completion?(.success(country))
+            cont.resume(returning: country)
         }
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        completion?(.failure(error))
+        guard let cont = locationContinuation else { return }
+        cont.resume(throwing: error)
         cleanup()
-    }
-    
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            if completion != nil {
-                locationManager.startUpdatingLocation()
-            }
-        case .denied, .restricted:
-            completion?(.failure(LocationError.permissionDenied))
-            cleanup()
-        case .notDetermined:
-            // We do nothing here; once the user chooses,
-            // the status will change again to one of the above states.
-            break
-        @unknown default:
-            break
-        }
     }
 }
 
 // MARK: - Error Types
 
 public enum LocationError: LocalizedError {
+    /// User denied or app is restricted
     case permissionDenied
+    /// Couldn’t map location to a valid country
     case geocodingFailed
-    
+
     public var errorDescription: String? {
         switch self {
         case .permissionDenied:

@@ -3,15 +3,15 @@ import Foundation
 // Domain model for Country
 public struct Country: Identifiable, Equatable, Codable, Sendable, Hashable {
     public let id: String
-    public let name: CountryName
-    public let capital: String?
-    public let currency: Currency?
-    public let languages: [String]
-    public let flagUrl: URL?
-    public let coordinates: Coordinates?
-    public let population: Int
-    public let area: Double?
-    public let region: String
+    public var name: CountryName
+    public var capital: String?
+    public var currency: Currency?
+    public var languages: [String]
+    public var flagUrl: URL?
+    public var coordinates: Coordinates?
+    public var population: Int
+    public var area: Double?
+    public var region: String
     
     public init(
         id: String,
