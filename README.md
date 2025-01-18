@@ -7,6 +7,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 📝 Table of Contents
+- [Preview](#preview)
 - [About](#about)
 - [Features](#features)
 - [Architecture](#architecture)
@@ -21,6 +22,12 @@
 - [License](#license)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
+
+## 📱 Preview <a name = "preview"></a>
+<video width="100%" controls>
+  <source src="TheCountries.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## 🔍 About <a name = "about"></a>
 The Countries is a sophisticated iOS application demonstrating advanced software architecture, concurrent programming, and modern iOS development practices. Built with Clean Architecture principles, the app showcases enterprise-level architecture decisions, robust error handling, and efficient resource management.
@@ -140,7 +147,7 @@ xcodebuild test -scheme TheCountries -destination 'platform=iOS Simulator,name=i
 ## 📝 License <a name = "license"></a>
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-## ✍️ Authors <a name = "authors"></a>
+## ✍\u{fef} Authors <a name = "authors"></a>
 - [@mohammed-salah-zidane](https://github.com/mohammed-salah-zidane) - Initial work
 
 ## 🎉 Acknowledgments <a name = "acknowledgments"></a>
