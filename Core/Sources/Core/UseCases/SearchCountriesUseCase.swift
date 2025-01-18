@@ -37,6 +37,7 @@ public final class SearchCountriesUseCase: SearchCountriesUseCaseProtocol {
         self.repository = repository
     }
     
+    @MainActor
     public func execute(query: String) async throws -> [Country] {
         return try await repository.searchCountries(withQuery: query)
     }
