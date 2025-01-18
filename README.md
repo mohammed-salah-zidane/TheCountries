@@ -24,10 +24,8 @@
 - [Acknowledgments](#acknowledgments)
 
 ## 📱 Preview <a name = "preview"></a>
-<video width="100%" controls>
-  <source src="TheCountries.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+![Demo GIF](TheCountries.gif)
+
 
 ## 🔍 About <a name = "about"></a>
 The Countries is a sophisticated iOS application demonstrating advanced software architecture, concurrent programming, and modern iOS development practices. Built with Clean Architecture principles, the app showcases enterprise-level architecture decisions, robust error handling, and efficient resource management.
