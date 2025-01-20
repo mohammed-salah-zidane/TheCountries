@@ -118,9 +118,6 @@ open TheCountries.xcodeproj
 ## ✅ Testing <a name = "testing"></a>
 Comprehensive test coverage including:
 - Unit Tests
-- Integration Tests
-- UI Tests
-- Performance Tests
 
 Run tests using:
 ```bash
