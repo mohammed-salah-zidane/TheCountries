@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AB99BA222D3ABBF500D80CFE /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA212D3ABBF500D80CFE /* Presentation */; };
+		AB99BA232D3ABBF500D80CFE /* Presentation in Embed Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA212D3ABBF500D80CFE /* Presentation */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		AB99BA262D3ABBFD00D80CFE /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA252D3ABBFD00D80CFE /* Core */; };
+		AB99BA282D3ABBFD00D80CFE /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = AB99BA272D3ABBFD00D80CFE /* Data */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AB13B6F22D36BF2B00D6D914 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -23,15 +30,46 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AB99BA242D3ABBF500D80CFE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AB99BA232D3ABBF500D80CFE /* Presentation in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		AB13B6E12D36BF2900D6D914 /* TheCountries.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheCountries.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB13B6F12D36BF2B00D6D914 /* TheCountriesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheCountriesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB13B6FB2D36BF2B00D6D914 /* TheCountriesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheCountriesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB624E3F2D3967C00001BD50 /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
+		AB624E402D3967FA0001BD50 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
+		AB624E412D3968260001BD50 /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
+		ABFF4FA32D3ADEF200FF589D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ABFF4FA52D3B244500FF589D /* Exceptions for "TheCountries" folder in "TheCountries" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AB13B6E02D36BF2900D6D914 /* TheCountries */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AB13B6E32D36BF2900D6D914 /* TheCountries */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ABFF4FA52D3B244500FF589D /* Exceptions for "TheCountries" folder in "TheCountries" target */,
+			);
 			path = TheCountries;
 			sourceTree = "<group>";
 		};
@@ -52,6 +90,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB99BA222D3ABBF500D80CFE /* Presentation in Frameworks */,
+				AB99BA262D3ABBFD00D80CFE /* Core in Frameworks */,
+				AB99BA282D3ABBFD00D80CFE /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,10 +116,15 @@
 		AB13B6D82D36BF2900D6D914 = {
 			isa = PBXGroup;
 			children = (
+				AB624E412D3968260001BD50 /* Core */,
+				AB624E402D3967FA0001BD50 /* Presentation */,
+				AB624E3F2D3967C00001BD50 /* Data */,
 				AB13B6E32D36BF2900D6D914 /* TheCountries */,
 				AB13B6F42D36BF2B00D6D914 /* TheCountriesTests */,
 				AB13B6FE2D36BF2B00D6D914 /* TheCountriesUITests */,
+				AB99BA202D3ABBF500D80CFE /* Frameworks */,
 				AB13B6E22D36BF2900D6D914 /* Products */,
+				ABFF4FA32D3ADEF200FF589D /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +138,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AB99BA202D3ABBF500D80CFE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -102,6 +155,7 @@
 				AB13B6DD2D36BF2900D6D914 /* Sources */,
 				AB13B6DE2D36BF2900D6D914 /* Frameworks */,
 				AB13B6DF2D36BF2900D6D914 /* Resources */,
+				AB99BA242D3ABBF500D80CFE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,6 +166,9 @@
 			);
 			name = TheCountries;
 			packageProductDependencies = (
+				AB99BA212D3ABBF500D80CFE /* Presentation */,
+				AB99BA252D3ABBFD00D80CFE /* Core */,
+				AB99BA272D3ABBFD00D80CFE /* Data */,
 			);
 			productName = TheCountries;
 			productReference = AB13B6E12D36BF2900D6D914 /* TheCountries.app */;
@@ -399,11 +456,18 @@
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TheCountries/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationTemporaryUsageDescriptionDictionary = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,11 +492,18 @@
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TheCountries/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationTemporaryUsageDescriptionDictionary = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "TheCountries App needs access to your locations to fetch your current location";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,7 +525,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.TheCountriesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -473,7 +544,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.TheCountriesTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -491,6 +562,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.TheCountriesUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -508,6 +580,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7L998UXP4V;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.TheCountriesUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -558,6 +631,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AB99BA212D3ABBF500D80CFE /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
+		AB99BA252D3ABBFD00D80CFE /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		AB99BA272D3ABBFD00D80CFE /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AB13B6D92D36BF2900D6D914 /* Project object */;
 }
